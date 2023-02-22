@@ -17,13 +17,15 @@ public class Owner {
     private String phone;
     private String cni;
     private Date dob;
+    private int gender;
 
-    public Owner(String firstName, String lastName, String phone, String cni, Date dob) {
+    public Owner(String firstName, String lastName, String phone, String cni, Date dob, int gender) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.cni = cni;
         this.dob = dob;
+        this.gender = gender;
     }
 
     public int getId() {
@@ -74,9 +76,17 @@ public class Owner {
         this.dob = dob;
     }
 
+    public int isGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
     @Override
     public String toString() {
-        return "Owner{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone + ", cni=" + cni + ", dob=" + dob + '}';
+        return "Owner{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone + ", cni=" + cni + ", dob=" + dob + ", gender=" + gender + '}';
     }
     
     

@@ -1,12 +1,12 @@
-package models;
+package exam2;
 
-import data.DbContext;
+/*import data.DbContext;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.Logger;*/
 
 /**
  *
@@ -15,8 +15,9 @@ import java.util.logging.Logger;
 public class Exam2{
 
     
-    /*public static void main(String[] args) {
-        DbContext db = new DbContext();
+    public static void main(String[] args) {
+        new AppInterface();
+        /*DbContext db = new DbContext();
         // TODO code application logic here
         System.out.println("Hello");
         ResultSet rs = db.query("SELECT * FROM auto_owners");
@@ -40,7 +41,7 @@ public class Exam2{
         } catch (SQLException ex) {
             Logger.getLogger(Exam2.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-    }*/
+    */ 
+    }
     
 }
