@@ -1,25 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package exam2;
 
 import data.DbContext;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
-import java.time.Year;
-import java.util.Date;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Car;
 import models.Owner;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -34,8 +35,11 @@ public class AppInterface extends javax.swing.JFrame {
     initComponents();
 
     System.out.println("Welcome");
+    affichage();
   }
 
+  private int ins_ok;
+  private int ownerId = -1;
   DbContext db = new DbContext();
 
   /**
@@ -48,6 +52,10 @@ public class AppInterface extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         bloc_proprietaire = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jfCNI = new javax.swing.JTextField();
@@ -74,6 +82,35 @@ public class AppInterface extends javax.swing.JFrame {
         jfMatricule = new javax.swing.JTextField();
         jfValidate = new javax.swing.JButton();
         jfCancel = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jfTables = new javax.swing.JTable();
+        jComboBox1 = new javax.swing.JComboBox<>();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SAMA AUTO");
@@ -82,11 +119,17 @@ public class AppInterface extends javax.swing.JFrame {
 
         jLabel1.setText("CNI");
 
-        jfCNI.setText("0185-7852-589");
+        jfCNI.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jfCNIFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jfCNIFocusLost(evt);
+            }
+        });
 
         jLabel2.setText("First Name");
 
-        jfFirstName.setText("John");
         jfFirstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jfFirstNameActionPerformed(evt);
@@ -112,11 +155,7 @@ public class AppInterface extends javax.swing.JFrame {
 
         jLabel3.setText("Last Name");
 
-        jfLastName.setText("Doe");
-
         jLabel4.setText("Phone Number");
-
-        jfPhoneNumber.setText("221778885522");
 
         jLabel5.setText("DoB");
 
@@ -148,7 +187,7 @@ public class AppInterface extends javax.swing.JFrame {
                     .addComponent(jfLastName)
                     .addComponent(jfPhoneNumber)
                     .addComponent(jfDoB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         bloc_proprietaireLayout.setVerticalGroup(
             bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,11 +223,8 @@ public class AppInterface extends javax.swing.JFrame {
 
         jLabel6.setText("Marque");
 
-        jfMarque.setText("0185-7852-589");
-
         jLabel7.setText("Modele");
 
-        jfModel.setText("John");
         jfModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jfModelActionPerformed(evt);
@@ -200,8 +236,6 @@ public class AppInterface extends javax.swing.JFrame {
         jLabel9.setText("Year");
 
         jLabel10.setText("Matricule");
-
-        jfMatricule.setText("AAAA-0001-AA");
 
         javax.swing.GroupLayout bloc_proprietaire1Layout = new javax.swing.GroupLayout(bloc_proprietaire1);
         bloc_proprietaire1.setLayout(bloc_proprietaire1Layout);
@@ -264,20 +298,47 @@ public class AppInterface extends javax.swing.JFrame {
             }
         });
 
+        jfTables.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "CNI", "MATRICULE", "FIRST_NAME", "LAST_NAME", "PHONE", "BRAND", "YEAR"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(jfTables);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(86, 86, 86)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGap(58, 58, 58)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(bloc_proprietaire, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(80, Short.MAX_VALUE))
+                    .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bloc_proprietaire, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(59, 59, 59)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -286,11 +347,17 @@ public class AppInterface extends javax.swing.JFrame {
                 .addComponent(bloc_proprietaire, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(63, 63, 63))
         );
 
         pack();
@@ -321,7 +388,66 @@ public class AppInterface extends javax.swing.JFrame {
   private void jfValidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfValidateActionPerformed
     // TODO add your handling code here:
     form_validator();
+    // JOptionPane.showMessageDialog(this, "Good!! Inserted");
+    // JOptionPane.showMessageDialog(this, row > 0 ? "insert" : "not insert");
   }//GEN-LAST:event_jfValidateActionPerformed
+
+    private void jfCNIFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jfCNIFocusLost
+        
+        // jfCNI.setText("02787-147-7A");
+        
+        
+        // if exist id, set value on form
+        if(!jfCNI.getText().isEmpty()){
+            String __cni = jfCNI.getText();
+            //db.queryPrepare(String tableName, String[] keys, String[] symbols, String[] values, int skip_value);
+            
+            String tableName = "auto_owners";
+            String[] keys = {"CNI"};
+            String[] symbols = {"="};
+            String[] values = {__cni};
+            try {
+                ResultSet result = db.queryPrepare(tableName, keys, symbols, values, 0);
+                  
+                
+                
+                Vector row = new Vector();
+
+                int columnCount = db.getColumnsFromTable(tableName).length;
+                
+                while (result.next()) {
+                    row = new Vector(columnCount);
+                    for (int i = 1; i <= columnCount; i++) {
+                        row.add(result.getString(i));
+                    }
+                    break;
+                }
+                
+                
+                if (row.isEmpty()) {
+                    return;
+                }
+                
+                jfCNI.setText((String) row.get(4));
+                jfFirstName.setText((String) row.get(1));
+                jfLastName.setText((String) row.get(2));
+                jfPhoneNumber.setText((String) row.get(3));
+                //jfDoB.setDate((Date) row.get(5));
+                jfGenderMale.setSelected((boolean) row.get(6));
+                // (row.get(6));
+                
+                System.out.println("");
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(jfCNI.getText() + "  <--- aaaaa");
+        }
+    }//GEN-LAST:event_jfCNIFocusLost
+
+    private void jfCNIFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jfCNIFocusGained
+        jfCNI.setText("");
+    }//GEN-LAST:event_jfCNIFocusGained
 
   private void cancel_btn() {
     jfCNI.setText("");
@@ -340,18 +466,22 @@ public class AppInterface extends javax.swing.JFrame {
   }
 
   private void form_validator() {
-     
-    //ArrayList<<Owner,Car>> queries = new ArrayList<<Owner,Car>>();
-      
-    try{
+    try {
+        // validation des champs
+        if(input_validate() == false){
+            JOptionPane.showMessageDialog(this, "/!\\ Tous les champs sont obligatoires");
+            return;
+        }
+        
         // owner
         String _cni = jfCNI.getText();
         String _firstname = jfFirstName.getText();
         String _lastname = jfLastName.getText();
         String _phone = jfPhoneNumber.getText();
         Date _dob = jfDoB.getDate();
-        String _formatDob = new SimpleDateFormat("yyyy-MM-dd").format(_dob);
-
+        // default gender Male
+        int _gender = jfGenderMale.isSelected() ? 1 : 0;
+      
         // car
         String _matricule = jfMatricule.getText();
         String _marque = jfMarque.getText();
@@ -359,83 +489,128 @@ public class AppInterface extends javax.swing.JFrame {
         int _transmission = (int) jfTransmission.getValue();
         int _year = jfYear.getValue(); // set current year
 
-        // default gender Male
-        int _gender = jfGenderMale.isSelected() ? 1 : 0;
-        
-        if(!_cni.trim().isEmpty() && !_firstname.trim().isEmpty() 
-            && !_lastname.trim().isEmpty() && !_phone.trim().isEmpty() 
-            && !_formatDob.trim().isEmpty() && !_matricule.trim().isEmpty()
-            && !_marque.trim().isEmpty() && !_model.trim().isEmpty()){
-            
-            // String firstName, String lastName, String phone, String cni, Date dob
-            Owner ow = new Owner(_firstname, _lastname, _phone, _cni, _dob, _gender );
-            // String matricule, String marque, String model, int transmission, int annee
-            Car car = new Car(_matricule, _marque, _model, _transmission, _year );
-            
-            System.out.println(ow);
+        try {
+            // Formatage de la date en chaîne
+            DateFormat outputDateFormat = new SimpleDateFormat("yy-MM-dd");
+            String dateStr = outputDateFormat.format(_dob);
+
+            String[] parts = dateStr.split("-");
+            int o_year = Integer.parseInt(parts[0]);
+            int o_month = Integer.parseInt(parts[1]);
+            int o_day = Integer.parseInt(parts[2]);
+
+            Date dob = new Date(o_year, o_month, o_day);
+            System.out.println(dob);
+            Owner own = new Owner();
+            own.setFirstName(_firstname);
+            own.setLastName(_lastname);
+            own.setPhone(_phone);
+            own.setCni(_cni);
+            own.setDob(dob);
+            own.setGender(_gender);
+
+            String[] cols = db.getColumnsFromTable("auto_owners");
+            Object[] owner_vals = owner_values_object(own);
+
+            ownerId = db.insertIntoTable("auto_owners", cols, owner_vals, 1);
+
+            affichage();
+        } catch (SQLException err) {
+            System.out.println(err.getMessage());
+            err.getStackTrace();
+        }
+
+        //
+        if (ownerId == -1) return;
+
+        try {
+            System.out.println("");
+            // String matricule, String marque, String model, int transmission, int annee, int ownerId
+            Car car = new Car(_marque, _model, _transmission, _year, ownerId);
             System.out.println(car);
+            String[] cols = db.getColumnsFromTable("auto_cars");
+            Object[] car_vals = car_values_object(car);
+
+            db.insertIntoTable("auto_cars", cols, car_vals, 1);
+          
+            affichage();
+          
+        } catch (SQLException err) {
+            System.out.println(err.getMessage());
+            err.getStackTrace();
         }
-        //return null;
-    }catch(Exception ex){
+      
+    } catch (Exception ex) {
         System.out.println("Les champs sont obligatoires");
+        JOptionPane.showMessageDialog(this, "/!\\ Tous les champs sont obligatoires");
     }
-    //return null;
+    
   }
   
-  
-  
-  private void insert(boolean returnId) {
-   
-    // INSERT INTO auto_owners VALUES("Maurice", "LEMAIRE", "221778885522", "0125-147-258", "1990-02-19")
-    String sql = "INSERT INTO auto_owners VALUES(?,?,?,?,?,?)";
+  public boolean input_validate(){
+    // owner
+    String _cni = jfCNI.getText();
+    String _firstname = jfFirstName.getText();
+    String _lastname = jfLastName.getText();
+    String _phone = jfPhoneNumber.getText();
     
-    /*PreparedStatement pstmt = db.insert(sql);
+    Date _dob = jfDoB.getDate();
+
+    // car
+    String _matricule = jfMatricule.getText();
+    String _marque = jfMarque.getText();
+    String _model = jfModel.getText();
+    //int _transmission = (int) jfTransmission.getValue();
+    return _dob != null && !_cni.trim().isEmpty() && !_firstname.trim().isEmpty() && !_lastname.trim().isEmpty() && !_phone.trim().isEmpty() && !_matricule.trim().isEmpty() && !_marque.trim().isEmpty() && !_model.trim().isEmpty();
+  }
+
+  private Object[] car_values_object(Car car) {
+    List<Object> carList = new ArrayList<>();
+
+    carList.add(car.getMatricule());
+
+    carList.add(car.getModel());
+    carList.add(car.getMarque());
+    carList.add(car.getTransmission());
+    carList.add(car.getAnnee());
+    carList.add(car.getOwnerId());
+
+    Object[] cars = carList.toArray();
+
+    return cars;
+  }
+
+  private Object[] owner_values_object(Owner own) {
+    List<Object> carList = new ArrayList<>();
+
+    carList.add(own.getFirstName());
+    carList.add(own.getLastName());
+    carList.add(own.getPhone());
+    carList.add(own.getCni());
+    carList.add(own.getDob());
+    carList.add(own.getGender());
+
+    Object[] owners = carList.toArray();
+
+    return owners;
+  }
+
+  private void affichage() {
     try {
-        pstmt.setString(1, "Fatou");
-        pstmt.setString(2, "FALL");
-        pstmt.setString(3, "221760001122");
-        pstmt.setString(4, "0155-563-147");
-        pstmt.setString(5, "2023-01-19");
-        pstmt.setString(6, "1");
-
-        pstmt.executeUpdate();
-        System.out.println("Insertion réussie !");
-    } catch (SQLException ex) {
-        Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
-    }*/
-
-    
-
-    
-    // ResultSet rs = db.query("SELECT * FROM auto_owners");
-    
-    /*try {
-        while(rs.next()){
-            try {
-                System.out.println(rs.getString(1));
-            } catch (SQLException ex) {
-                Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    } catch (SQLException ex) {
-        Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
-    }*/
-    
+      String sql = "SELECT CNI,MATRICULE,FIRST_NAME,LAST_NAME,PHONE,MARQUE,ANNEE FROM auto_owners, auto_cars WHERE auto_owners.OWNER_ID=auto_cars.OWNER_ID";
+      ResultSet rs = db.query(sql);
+      db.displayTable(rs, jfTables);
+    } catch (Exception ex) {
+      Logger
+        .getLogger(AppInterface.class.getName())
+        .log(Level.SEVERE, null, ex);
+    }
   }
 
-  
-  
-  
-  
   /**
    * @param args the command line arguments
    */
   public static void main(String args[]) {
-    /* Set the Nimbus look and feel */
-    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-     */
     try {
       for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
         if ("Nimbus".equals(info.getName())) {
@@ -477,6 +652,7 @@ public class AppInterface extends javax.swing.JFrame {
     private javax.swing.JPanel bloc_proprietaire;
     private javax.swing.JPanel bloc_proprietaire1;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -487,6 +663,11 @@ public class AppInterface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jfCNI;
     private javax.swing.JButton jfCancel;
     private com.toedter.calendar.JDateChooser jfDoB;
@@ -498,6 +679,7 @@ public class AppInterface extends javax.swing.JFrame {
     private javax.swing.JTextField jfMatricule;
     private javax.swing.JTextField jfModel;
     private javax.swing.JTextField jfPhoneNumber;
+    private javax.swing.JTable jfTables;
     private javax.swing.JSpinner jfTransmission;
     private javax.swing.JButton jfValidate;
     private com.toedter.calendar.JYearChooser jfYear;

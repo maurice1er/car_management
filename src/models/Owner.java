@@ -19,6 +19,8 @@ public class Owner {
     private Date dob;
     private int gender;
 
+    public Owner() { }
+
     public Owner(String firstName, String lastName, String phone, String cni, Date dob, int gender) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -76,7 +78,7 @@ public class Owner {
         this.dob = dob;
     }
 
-    public int isGender() {
+    public int getGender() {
         return gender;
     }
 

@@ -2,8 +2,11 @@ package data;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class DbContext {
 
@@ -20,20 +23,14 @@ public class DbContext {
     
     public DbContext(){
         cursor();
+        System.out.println("Connexion réussie !");
     }
 
-    /*public static DbContext getInstance() throws Exception {
-        if (db == null) {
-          db = new DbContext();
-        }
-        return db;
-    }*/
     
     private Connection connect() {
         try {
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                 Connection conn = DriverManager.getConnection(this.url, "sa", "Admin23#");
-                System.out.println("Connexion réussie !");
                 return conn; 
         } catch (SQLException e) {
             System.out.println("Erreur de connexion : " + e.getMessage());
@@ -46,14 +43,7 @@ public class DbContext {
     
     private Statement cursor() {
         try {
-                /*Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-                Connection conn = DriverManager.getConnection(this.url, "sa", "Admin23#");
-                System.out.println("Connexion réussie !");
-                
-                stmt = conn.createStatement();*/
-                
                 stmt = connect().createStatement();
-
                 return stmt; 
         } catch (Exception ex) {
             Logger.getLogger(DbContext.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,13 +63,28 @@ public class DbContext {
         return null;
     }
     
-    public void insertIntoTable(Connection conn, String tableName, String[] columns, Object[] values) throws SQLException {
+    public int insertIntoTable(String tableName, String[] columns, Object[] values, int skip_value) throws SQLException{
+        try{
         // Créer une requête SQL dynamique avec les paramètres fournis
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ");
         sb.append(tableName);
-        sb.append(" VALUES (");
+        sb.append(" (");
+        for (int i = 0; i < columns.length; i++) {
+            
+            // skip first column
+            if (i < skip_value && skip_value != 0) {
+                continue;
+            }
+            
+            sb.append(columns[i]);
+            if (i < columns.length - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append(") VALUES (");
         for (int i = 0; i < values.length; i++) {
+            
             sb.append("?");
             if (i < values.length - 1) {
                 sb.append(", ");
@@ -88,20 +93,82 @@ public class DbContext {
         sb.append(")");
         String sql = sb.toString();
         
+        // CARS_Id, MATRICULE
+        /*sb.delete(0, 0);
+        sb.delete(0, 0);*/
+        
+        System.out.println(sql);
+        
         // Créer une instruction préparée avec la requête SQL et les valeurs fournies
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+        PreparedStatement pstmt = connect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         for (int i = 0; i < values.length; i++) {
+            System.out.println(i + " --->" + values[i] + ","); 
             pstmt.setObject(i+1, values[i]);
         }
         
         // Exécuter l'instruction préparée pour insérer les données dans la table
-        pstmt.executeUpdate();
+        int affectedRows = pstmt.executeUpdate();
+        System.out.println(""); 
+        System.out.println(affectedRows);   
+
+        if (affectedRows == 0) {
+            throw new SQLException("Creating user failed, no rows affected.");
+        }
+        
+        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                System.out.println(generatedKeys.getLong(1));
+                return generatedKeys.getInt(1);
+            }
+            else {
+                throw new SQLException("Creating user failed, no ID obtained.");
+            }
+        }   
+        }finally {
+            if (connect() != null) {
+                connect().close();
+            }
+        }
+    }
+        
+    public ResultSet queryPrepare(String tableName, String[] keys, String[] symbols, String[] values, int skip_value) throws SQLException{
+        
+        // Créer une requête SQL dynamique avec les paramètres fournis
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT * FROM ");
+        sb.append(tableName);
+        sb.append(" WHERE ");
+        for (int i = 0; i < keys.length; i++) {
+            
+            // skip first column
+            if (i < skip_value && skip_value != 0) {
+                continue;
+            }
+            
+            sb.append(keys[i]);
+            sb.append(symbols[i]);
+            sb.append("'");
+            sb.append(values[i]);
+            sb.append("'");
+            
+            if (i < keys.length - 1) {
+                sb.append(", ");
+            }
+        }
+        
+        String sql = sb.toString();
+        System.out.println(sql);
+        
+        ResultSet rs = query(sql);
+        
+        return rs;
     }
     
     // Fonction pour récupérer les noms des colonnes d'une table
-    public static String[] getColumnsFromTable(Connection conn, String tableName) throws SQLException {
+    public String[] getColumnsFromTable(String tableName) throws SQLException {
+        try{
         // Obtenir les métadonnées de la base de données pour la connexion donnée
-        DatabaseMetaData metaData = conn.getMetaData();
+        DatabaseMetaData metaData = connect().getMetaData();
         
         // Obtenir les noms de colonnes pour la table donnée
         ResultSet rs = metaData.getColumns(null, null, tableName, null);
@@ -117,6 +184,52 @@ public class DbContext {
         String[] columns = new String[columnList.size()];
         columnList.toArray(columns);
         return columns;
+        
+        }finally{
+            if (connect() != null) {
+                connect().close();
+            }
+        }
+    }
+    
+    
+    
+    public void displayTable(ResultSet rs, JTable table) {
+        try {
+
+            ResultSetMetaData md = rs.getMetaData();
+            int columnCount = md.getColumnCount();
+            
+            
+
+            Vector columns = new Vector(columnCount);
+            for (int i = 1; i <= columnCount; i++) {
+                columns.add(md.getColumnName(i));
+            }
+            System.out.println(columns);
+            System.out.println("");
+            
+
+            Vector data = new Vector();
+            Vector row;
+
+            while (rs.next()) {
+                row = new Vector(columnCount);
+                for (int i = 1; i <= columnCount; i++) {
+                    row.add(rs.getString(i));
+                }
+                
+                data.add(row);
+            }
+            System.out.println(data);
+            System.out.println("");
+
+            DefaultTableModel tableModel = new DefaultTableModel(data, columns);
+            table.setModel(tableModel);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

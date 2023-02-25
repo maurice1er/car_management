@@ -4,6 +4,8 @@
  */
 package models;
 
+import exam2.GenerateMatricule;
+
 /**
  *
  * @author user
@@ -14,31 +16,32 @@ public class Car {
     private String marque;
     private String model;
     private int transmission;
-    private  int annee;
+    private int annee;
+    
+    private int ownerId;
+    
+    private static String mat = new GenerateMatricule().getMatricule();
 
-    public Car(String matricule, String marque, String model, int transmission, int annee) {
-        this.matricule = matricule;
+    public Car(String marque, String model, int transmission, int annee, int ownerId) {
+        this.matricule = mat;
         this.marque = marque;
         this.model = model;
         this.transmission = transmission;
         this.annee = annee;
+        this.ownerId = ownerId;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getMatricule() {
         return matricule;
     }
 
-    public void setMatricule(String matricule) {
+    /*public void setMatricule(String matricule) {
         this.matricule = matricule;
-    }
+    }*/
 
     public String getMarque() {
         return marque;
@@ -72,9 +75,17 @@ public class Car {
         this.annee = annee;
     }
 
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
     @Override
     public String toString() {
-        return "Car{" + "id=" + id + ", matricule=" + matricule + ", marque=" + marque + ", model=" + model + ", transmission=" + transmission + ", annee=" + annee + '}';
+        return "Car{" + "id=" + id + ", matricule=" + matricule + ", marque=" + marque + ", model=" + model + ", transmission=" + transmission + ", annee=" + annee + ", ownerId=" + ownerId + '}';
     }
     
     
