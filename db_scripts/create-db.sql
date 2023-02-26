@@ -37,7 +37,7 @@ ALTER TABLE [auto_cars] ADD FOREIGN KEY ([OWNER_ID]) REFERENCES [dbo].[auto_owne
 -- 
 --
 INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
-VALUES ('Armel', 'DREY', '774481160', '12223331', '2022-02-12');
+VALUES ('Tsely', 'LO', '774481160', '12223331', '2022-02-12');
 
 INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
 VALUES("Maurice", "LEMAIRE", "221778885522", "187147258", "1990-02-19");
