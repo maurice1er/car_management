@@ -1,0 +1,58 @@
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'automobile')
+    BEGIN
+        CREATE DATABASE automobile;
+    END;
+GO
+
+
+USE automobile;
+GO
+
+-- 
+-- 
+CREATE TABLE auto_owners (
+            OWNER_ID INT PRIMARY KEY IDENTITY (1, 1),
+            FIRST_NAME VARCHAR(100) NOT NULL,
+            LAST_NAME VARCHAR(100) NOT NULL,
+            PHONE VARCHAR(100) NOT NULL UNIQUE,
+            CNI VARCHAR(100) NOT NULL UNIQUE,
+            DOB DATE NOT NULL
+        );
+    
+
+CREATE TABLE auto_cars (
+            CARS_ID INT PRIMARY KEY IDENTITY (1, 1),
+            MATRICULE VARCHAR(100) NOT NULL UNIQUE,
+            MARQUE VARCHAR(100) NOT NULL,
+            MODEL VARCHAR(100) NOT NULL,
+            TRANSMISSION VARCHAR(100) NOT NULL,
+            ANNEE INT NOT NULL,
+            OWNER_ID int  FOREIGN KEY REFERENCES auto_owners (OWNER_ID)
+        );
+
+ALTER TABLE [auto_cars] ADD FOREIGN KEY ([OWNER_ID]) REFERENCES [dbo].[auto_owners] ([OWNER_ID]);
+
+
+
+-- 
+--
+INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
+VALUES ('Armel', 'DREY', '774481160', '12223331', '2022-02-12');
+
+INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
+VALUES("Maurice", "LEMAIRE", "221778885522", "187147258", "1990-02-19");
+
+INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
+VALUES("Fatou", "FALL", "221779995522", "125147259", "1985-02-19");
+
+INSERT INTO [dbo].[auto_owners] ([FIRST_NAME], [LAST_NAME], [PHONE], [CNI], [DOB])
+VALUES("Badara", "SADJI", "221775553322", "225147260", "1995-12-03");
+
+
+---
+
+
+INSERT INTO auto_cars VALUES("AAA-001-AB", "TOYOTA", "405", "AUTOMOBILE", 1994, 1);
+INSERT INTO auto_cars VALUES("AAA-002-AA", "TOYOTA", "COROLLA", "AUTOMOBILE", 2005, 2);
+INSERT INTO auto_cars VALUES("AAA-003-AA", "TOYOTA", "CARINA3", "MANUEL", 2007, 3);
+

@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  mysqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mysqlserver
+    ports:
+      - 11433:1433
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Admin23#"
+    volumes:
+      - ./db_scripts:/scripts/
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # Launch MSSQL and send to background
+        /opt/mssql/bin/sqlservr &
+        sleep 30
+        # Run every script in /scripts
+        for foo in /scripts/*.sql
+          do /opt/mssql-tools/bin/sqlcmd -U sa -P $$SA_PASSWORD -l 30 -e -i $$foo
+        done
+        sleep infinity
+    networks:
+      - msnet
+
+  mssqladminer:
+    image: adminer
+    container_name: mssqladminer
+    restart: always
+    ports:
+      - 11400:8080
+    depends_on:
+      - mysqlserver
+    networks:
+      - msnet
+
+networks:
+  msnet:
+    driver: bridge
+
+# /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Admin23#"
+
+
+# /opt/mssql-tools/bin/sqlcmd -U sa -P Admin23#
