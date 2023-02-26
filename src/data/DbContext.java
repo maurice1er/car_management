@@ -97,19 +97,17 @@ public class DbContext {
         /*sb.delete(0, 0);
         sb.delete(0, 0);*/
         
-        System.out.println(sql);
+        //System.out.println(sql);
         
         // Créer une instruction préparée avec la requête SQL et les valeurs fournies
         PreparedStatement pstmt = connect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         for (int i = 0; i < values.length; i++) {
-            System.out.println(i + " --->" + values[i] + ","); 
+            //System.out.println(i + " --->" + values[i] + ","); 
             pstmt.setObject(i+1, values[i]);
         }
         
         // Exécuter l'instruction préparée pour insérer les données dans la table
-        int affectedRows = pstmt.executeUpdate();
-        System.out.println(""); 
-        System.out.println(affectedRows);   
+        int affectedRows = pstmt.executeUpdate();   
 
         if (affectedRows == 0) {
             throw new SQLException("Creating user failed, no rows affected.");
@@ -157,11 +155,42 @@ public class DbContext {
         }
         
         String sql = sb.toString();
-        System.out.println(sql);
+        //System.out.println(sql);
         
         ResultSet rs = query(sql);
         
         return rs;
+    }
+        
+    public int queryPrepareId(String tablename, String returnColumn, String filterColumn, String value) throws SQLException{
+        
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT ");
+            sb.append(returnColumn);
+            sb.append(" FROM ");
+            sb.append(tablename);
+            sb.append(" WHERE ");
+            sb.append(filterColumn);
+            sb.append("= ?");
+            
+            String sql = sb.toString();
+            //System.out.println(sql);
+            PreparedStatement stmt = connect().prepareStatement(sql);
+            stmt.setString(1, value); 
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                int id = rs.getInt(returnColumn); 
+                //System.out.println("ID de l'utilisateur : " + id);
+                return id;
+            } else {
+                //System.out.println("Aucun utilisateur trouvé.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur : ---> " + e.getMessage());
+        }   
+        return -1;
     }
     
     // Fonction pour récupérer les noms des colonnes d'une table

@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,13 +39,20 @@ public class AppInterface extends javax.swing.JFrame {
   DbContext db = new DbContext();
   
   private String filterByGenderValue;
+  private boolean owner_exist = false;
   
   
   public AppInterface() {
+    System.out.println("Welcome");
+    
     initComponents();
 
-    System.out.println("Welcome");
     affichage(filterByGenderValue);
+    
+    // center screen
+    this.setLocationRelativeTo(null);
+    // Affiche la fenêtre
+    this.setVisible(true);
   }
 
   /**
@@ -297,6 +306,7 @@ public class AppInterface extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jfTables.setAlignmentX(0.7F);
         jScrollPane3.setViewportView(jfTables);
 
         jfFilterByGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Male", "Female" }));
@@ -326,14 +336,16 @@ public class AppInterface extends javax.swing.JFrame {
                         .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bloc_proprietaire, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(440, 440, 440)
                         .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jfFilterByGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(93, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jfFilterByGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,8 +362,8 @@ public class AppInterface extends javax.swing.JFrame {
                             .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jfFilterByGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel11))))
@@ -393,9 +405,11 @@ public class AppInterface extends javax.swing.JFrame {
             String[] symbols = {"="};
             String[] values = {__cni};
             
+            
             try {
                 ResultSet result = db.queryPrepare(tableName, keys, symbols, values, 0);
                 List row = new ArrayList();
+                
 
                 int columnCount = db.getColumnsFromTable(tableName).length;
                     
@@ -423,15 +437,10 @@ public class AppInterface extends javax.swing.JFrame {
                     Date date = dateFormat.parse(row.get(5).toString());
                     jfDoB.setDate(date);
                     
-                    System.out.println(date);
-                    System.out.println(row.get(5));
+                    owner_exist = true;                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                
-                // (row.get(6));
-                
-                System.out.println("");
                 
             } catch (SQLException ex) {
                 Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -454,48 +463,46 @@ public class AppInterface extends javax.swing.JFrame {
     private void jfFilterByGenderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jfFilterByGenderItemStateChanged
         // TODO add your handling code here:
         filterByGenderValue = (String) jfFilterByGender.getSelectedItem();
-        System.out.println("Selected value: " + filterByGenderValue);
+        //System.out.println("Selected value: " + filterByGenderValue);
         
         affichage(filterByGenderValue);
     }//GEN-LAST:event_jfFilterByGenderItemStateChanged
 
-
+    
 
   private void form_validator() {
     try {
         // validation des champs
         if(input_validate() == false){
-            JOptionPane.showMessageDialog(this, "/!\\ Tous les champs sont obligatoires");
+            JOptionPane.showMessageDialog(this, "/!\\ All field are required");
             return;
         }
         
-        // owner
+        // owner 
         String _firstname = jfFirstName.getText();
         String _lastname = jfLastName.getText();
         String _phone = jfPhoneNumber.getText();
         String _cni = jfCNI.getText();
         Date _dob = jfDoB.getDate();
-        
-      
-        // car
-        String _matricule = jfMatricule.getText();
-        String _marque = jfMarque.getText();
-        String _model = jfModel.getText();
-        String _transmission = jfTransmission.getSelectedIndex() == 0 ? "Automatique" : "Manuel";
-        int _year = jfYear.getValue(); // set current year
 
         try {
             // Formatage de la date en chaîne
-            DateFormat outputDateFormat = new SimpleDateFormat("yy-MM-dd");
+            DateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String dateStr = outputDateFormat.format(_dob);
 
             String[] parts = dateStr.split("-");
             int o_year = Integer.parseInt(parts[0]);
             int o_month = Integer.parseInt(parts[1]);
             int o_day = Integer.parseInt(parts[2]);
+            System.out.println(available_owner(o_year,o_month,o_day));
+            
+            if(available_owner(o_year,o_month,o_day) == false){
+                JOptionPane.showMessageDialog(this, "Illegal to those under 18");
+                return;
+            }
+                
 
             Date dob = new Date(o_year, o_month, o_day);
-            System.out.println(dob);
             Owner own = new Owner();
             own.setFirstName(_firstname);
             own.setLastName(_lastname);
@@ -505,24 +512,44 @@ public class AppInterface extends javax.swing.JFrame {
 
             String[] cols = db.getColumnsFromTable("auto_owners");
             Object[] owner_vals = owner_values_object(own);
-
-            ownerId = db.insertIntoTable("auto_owners", cols, owner_vals, 1);
-
+            
+            
+            
+            if(owner_exist == false)
+                ownerId = db.insertIntoTable("auto_owners", cols, owner_vals, 1);
+            else
+                ownerId = db.queryPrepareId("auto_owners", "OWNER_ID", "CNI", _cni);
+                
+        
+            //System.out.println(ownerId);
             affichage(filterByGenderValue);
         } catch (SQLException err) {
             System.out.println(err.getMessage());
+            if (err.getMessage().contains("Violation of UNIQUE KEY constraint")) {
+                JOptionPane.showMessageDialog(this, "Cannot insert duplicate key: Owner");
+            } else {
+                JOptionPane.showMessageDialog(this, "An error occurred while inserting: Owner");
+            }
             err.getStackTrace();
+            return;
         }
 
-        //
+        
         if (ownerId == -1) return;
 
+      
+        // car
+        String _matricule = jfMatricule.getText();
+        String _marque = jfMarque.getText();
+        String _model = jfModel.getText();
+        String _transmission = jfTransmission.getSelectedIndex() == 0 ? "Automatique" : "Manuel";
+        int _year = jfYear.getValue(); // set current year
+        
         try {
-            System.out.println("");
             // String matricule, String marque, String model, int transmission, int annee, int ownerId
             Car car = new Car(_matricule,_marque, _model, _transmission, _year, ownerId);
             
-            System.out.println(car);
+            //System.out.println(car);
             String[] cols = db.getColumnsFromTable("auto_cars");
             Object[] car_vals = car_values_object(car);
 
@@ -532,7 +559,14 @@ public class AppInterface extends javax.swing.JFrame {
           
         } catch (SQLException err) {
             System.out.println(err.getMessage());
+            if (err.getMessage().contains("Violation of UNIQUE KEY constraint")) {
+                JOptionPane.showMessageDialog(this, "Cannot insert duplicate key: Car");
+            } else {
+                JOptionPane.showMessageDialog(this, "An error occurred while inserting: Car");
+            }
+            
             err.getStackTrace();
+            return;
         }
         
         // Altert and clear form
@@ -545,6 +579,27 @@ public class AppInterface extends javax.swing.JFrame {
     }
     
   }
+  
+  
+  private boolean available_owner(int year, int month, int day){
+    // date de naissance de l'utilisateur
+    LocalDate dateNaissance = LocalDate.of(year, month, day);
+
+    // date actuelle
+    LocalDate dateActuelle = LocalDate.now();
+
+    // calcul de l'âge en années
+    long age = ChronoUnit.YEARS.between(dateNaissance, dateActuelle);
+      System.out.println("l'utilisateur a: " + dateNaissance);
+      System.out.println("l'utilisateur a: " + dateActuelle);
+      System.out.println("l'utilisateur a: " + age);
+    // vérification si l'utilisateur a au moins 18 ans
+    if (age >= 18) {
+        return true;
+    } 
+    return false;
+}
+  
   
   public boolean input_validate(){
     // owner
