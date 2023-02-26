@@ -1,6 +1,10 @@
 ## Projet de gestion des automobiles avec Java swing
 
-## Base de donnees Sql Server dockerize
+## Result
+![Screeshort result](/c/Users/user/Pictures/javaswing.png)
+
+
+## Base de donnees Sql Server 
 
 > docker-compose.yml
 
@@ -17,7 +21,7 @@ services:
       ACCEPT_EULA: 'Y'
       SA_PASSWORD: 'your_password'
     volumes:
-      - ./scripts:/scripts/
+      - ./db_scripts:/scripts/
     command:
       - /bin/bash
       - -c
@@ -36,48 +40,4 @@ services:
 networks:
   msnet:
     driver: bridge
-```
-
-> script
-
-```sql
-IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'automobile')
-    BEGIN
-        CREATE DATABASE automobile;
-    END;
-GO
-
-
-USE automobile;
-GO
-
---
---
-
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TableName' and xtype='users')
-    BEGIN
-        CREATE TABLE TableName (
-            USER_ID INT PRIMARY KEY IDENTITY (1, 1),
-            FIRST_NAME VARCHAR(100) NOT NULL,
-            LAST_NAME VARCHAR(100) NOT NULL,
-            PHONE VARCHAR(100) NOT NULL,
-            CNI VARCHAR(100) NOT NULL,
-            DOB DATETIME NOT NULL
-        );
-    END;
-GO
-
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TableName' and xtype='cars')
-    BEGIN
-        CREATE TABLE TableName (
-            CARS_Id INT PRIMARY KEY IDENTITY (1, 1),
-            MATRICULE VARCHAR(100) NOT NULL,
-            MARQUE VARCHAR(100) NOT NULL,
-            MODEL VARCHAR(100) NOT NULL,
-            TRANSMISSION INT NOT NULL,
-            ANNEE YEAR NOT NULL,
-            USER_ID int  FOREIGN KEY REFERENCES automobile.users (USER_ID)
-        );
-    END;
-GO
 ```
