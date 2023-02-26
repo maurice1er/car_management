@@ -15,15 +15,12 @@ public class Car {
     private String matricule;
     private String marque;
     private String model;
-    private int transmission;
+    private String transmission;
     private int annee;
-    
     private int ownerId;
-    
-    private static String mat = new GenerateMatricule().getMatricule();
 
-    public Car(String marque, String model, int transmission, int annee, int ownerId) {
-        this.matricule = mat;
+    public Car(String matricule, String marque, String model, String transmission, int annee, int ownerId) {
+        this.matricule = matricule;
         this.marque = marque;
         this.model = model;
         this.transmission = transmission;
@@ -31,17 +28,13 @@ public class Car {
         this.ownerId = ownerId;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getMatricule() {
         return matricule;
     }
 
-    /*public void setMatricule(String matricule) {
+    public void setMatricule(String matricule) {
         this.matricule = matricule;
-    }*/
+    }
 
     public String getMarque() {
         return marque;
@@ -59,11 +52,11 @@ public class Car {
         this.model = model;
     }
 
-    public int getTransmission() {
+    public String getTransmission() {
         return transmission;
     }
 
-    public void setTransmission(int transmission) {
+    public void setTransmission(String transmission) {
         this.transmission = transmission;
     }
 

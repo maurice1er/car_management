@@ -31,16 +31,20 @@ public class AppInterface extends javax.swing.JFrame {
   /**
    * Creates new form AppInterface
    */
+
+  private boolean ins_ok;
+  private int ownerId = -1;
+  DbContext db = new DbContext();
+  
+  private String filterByGenderValue;
+  
+  
   public AppInterface() {
     initComponents();
 
     System.out.println("Welcome");
-    affichage();
+    affichage(filterByGenderValue);
   }
-
-  private int ins_ok;
-  private int ownerId = -1;
-  DbContext db = new DbContext();
 
   /**
    * This method is called from within the constructor to initialize the form.
@@ -61,8 +65,6 @@ public class AppInterface extends javax.swing.JFrame {
         jfCNI = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jfFirstName = new javax.swing.JTextField();
-        jfGenderMale = new javax.swing.JRadioButton();
-        jfGenderFemale = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         jfLastName = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -76,15 +78,16 @@ public class AppInterface extends javax.swing.JFrame {
         jfModel = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jfTransmission = new javax.swing.JSpinner();
         jfYear = new com.toedter.calendar.JYearChooser();
         jLabel10 = new javax.swing.JLabel();
         jfMatricule = new javax.swing.JTextField();
+        jfTransmission = new javax.swing.JComboBox<>();
         jfValidate = new javax.swing.JButton();
         jfCancel = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jfTables = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jfFilterByGender = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -136,23 +139,6 @@ public class AppInterface extends javax.swing.JFrame {
             }
         });
 
-        buttonGroup1.add(jfGenderMale);
-        jfGenderMale.setSelected(true);
-        jfGenderMale.setText("Male");
-        jfGenderMale.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jfGenderMaleActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(jfGenderFemale);
-        jfGenderFemale.setText("Female");
-        jfGenderFemale.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jfGenderFemaleActionPerformed(evt);
-            }
-        });
-
         jLabel3.setText("Last Name");
 
         jLabel4.setText("Phone Number");
@@ -177,26 +163,17 @@ public class AppInterface extends javax.swing.JFrame {
                     .addComponent(jLabel5))
                 .addGap(46, 46, 46)
                 .addGroup(bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(bloc_proprietaireLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(jfGenderMale)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jfGenderFemale))
                     .addComponent(jfCNI)
                     .addComponent(jfFirstName)
                     .addComponent(jfLastName)
                     .addComponent(jfPhoneNumber)
-                    .addComponent(jfDoB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(jfDoB, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         bloc_proprietaireLayout.setVerticalGroup(
             bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bloc_proprietaireLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jfGenderMale)
-                    .addComponent(jfGenderFemale, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jfCNI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -216,7 +193,7 @@ public class AppInterface extends javax.swing.JFrame {
                 .addGroup(bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jfDoB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bloc_proprietaire1.setBorder(javax.swing.BorderFactory.createTitledBorder("Car"));
@@ -237,6 +214,9 @@ public class AppInterface extends javax.swing.JFrame {
 
         jLabel10.setText("Matricule");
 
+        jfTransmission.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatique", "Manuel" }));
+        jfTransmission.setToolTipText("");
+
         javax.swing.GroupLayout bloc_proprietaire1Layout = new javax.swing.GroupLayout(bloc_proprietaire1);
         bloc_proprietaire1.setLayout(bloc_proprietaire1Layout);
         bloc_proprietaire1Layout.setHorizontalGroup(
@@ -253,15 +233,15 @@ public class AppInterface extends javax.swing.JFrame {
                 .addGroup(bloc_proprietaire1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jfMarque, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                     .addComponent(jfModel)
-                    .addComponent(jfTransmission)
                     .addComponent(jfYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jfMatricule))
+                    .addComponent(jfMatricule)
+                    .addComponent(jfTransmission, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(16, 16, 16))
         );
         bloc_proprietaire1Layout.setVerticalGroup(
             bloc_proprietaire1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bloc_proprietaire1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(bloc_proprietaire1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(jfMatricule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -300,17 +280,17 @@ public class AppInterface extends javax.swing.JFrame {
 
         jfTables.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "CNI", "MATRICULE", "FIRST_NAME", "LAST_NAME", "PHONE", "BRAND", "YEAR"
+                "CNI", "FIRST_NAME", "LAST_NAME", "PHONE", "BRAND", "YEAR"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -319,7 +299,19 @@ public class AppInterface extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(jfTables);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jfFilterByGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Male", "Female" }));
+        jfFilterByGender.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jfFilterByGenderItemStateChanged(evt);
+            }
+        });
+        jfFilterByGender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jfFilterByGenderActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Filter");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -332,44 +324,42 @@ public class AppInterface extends javax.swing.JFrame {
                         .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bloc_proprietaire, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bloc_proprietaire, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(52, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jfFilterByGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(bloc_proprietaire, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(42, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(bloc_proprietaire, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bloc_proprietaire1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jfValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jfCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jfFilterByGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11))))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-  private void jfGenderFemaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfGenderFemaleActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_jfGenderFemaleActionPerformed
-
-  private void jfGenderMaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfGenderMaleActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_jfGenderMaleActionPerformed
 
   private void jfFirstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfFirstNameActionPerformed
     // TODO add your handling code here:
@@ -394,46 +384,51 @@ public class AppInterface extends javax.swing.JFrame {
 
     private void jfCNIFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jfCNIFocusLost
         
-        // jfCNI.setText("02787-147-7A");
-        
-        
-        // if exist id, set value on form
+        // if cni exist set value on form
         if(!jfCNI.getText().isEmpty()){
             String __cni = jfCNI.getText();
-            //db.queryPrepare(String tableName, String[] keys, String[] symbols, String[] values, int skip_value);
             
             String tableName = "auto_owners";
             String[] keys = {"CNI"};
             String[] symbols = {"="};
             String[] values = {__cni};
+            
             try {
                 ResultSet result = db.queryPrepare(tableName, keys, symbols, values, 0);
-                  
-                
-                
-                Vector row = new Vector();
+                List row = new ArrayList();
 
                 int columnCount = db.getColumnsFromTable(tableName).length;
-                
+                    
                 while (result.next()) {
-                    row = new Vector(columnCount);
+                    //row = new Vector(columnCount);
                     for (int i = 1; i <= columnCount; i++) {
                         row.add(result.getString(i));
                     }
                     break;
                 }
                 
-                
-                if (row.isEmpty()) {
+                if (row.isEmpty()){
+                    clear_all_without_cni();
                     return;
                 }
                 
-                jfCNI.setText((String) row.get(4));
+                
                 jfFirstName.setText((String) row.get(1));
                 jfLastName.setText((String) row.get(2));
                 jfPhoneNumber.setText((String) row.get(3));
-                //jfDoB.setDate((Date) row.get(5));
-                jfGenderMale.setSelected((boolean) row.get(6));
+                jfCNI.setText((String) row.get(4));
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date date = dateFormat.parse(row.get(5).toString());
+                    jfDoB.setDate(date);
+                    
+                    System.out.println(date);
+                    System.out.println(row.get(5));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
                 // (row.get(6));
                 
                 System.out.println("");
@@ -441,29 +436,30 @@ public class AppInterface extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(AppInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println(jfCNI.getText() + "  <--- aaaaa");
         }
     }//GEN-LAST:event_jfCNIFocusLost
 
     private void jfCNIFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jfCNIFocusGained
-        jfCNI.setText("");
+        if(jfCNI.getText().trim().isEmpty()){
+            jfCNI.setText("");
+        }else{
+            jfCNI.getText();
+        }
     }//GEN-LAST:event_jfCNIFocusGained
 
-  private void cancel_btn() {
-    jfCNI.setText("");
-    jfFirstName.setText("");
-    jfLastName.setText("");
-    jfPhoneNumber.setText("");
-    jfDoB.setDate(null);
+    private void jfFilterByGenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfFilterByGenderActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jfFilterByGenderActionPerformed
 
-    jfMarque.setText("");
-    jfModel.setText("");
-    jfTransmission.setValue(0);
-    jfYear.setValue(Year.now().getValue()); // set current year
+    private void jfFilterByGenderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jfFilterByGenderItemStateChanged
+        // TODO add your handling code here:
+        filterByGenderValue = (String) jfFilterByGender.getSelectedItem();
+        System.out.println("Selected value: " + filterByGenderValue);
+        
+        affichage(filterByGenderValue);
+    }//GEN-LAST:event_jfFilterByGenderItemStateChanged
 
-    // default gender Male
-    jfGenderMale.setSelected(true);
-  }
+
 
   private void form_validator() {
     try {
@@ -474,19 +470,18 @@ public class AppInterface extends javax.swing.JFrame {
         }
         
         // owner
-        String _cni = jfCNI.getText();
         String _firstname = jfFirstName.getText();
         String _lastname = jfLastName.getText();
         String _phone = jfPhoneNumber.getText();
+        String _cni = jfCNI.getText();
         Date _dob = jfDoB.getDate();
-        // default gender Male
-        int _gender = jfGenderMale.isSelected() ? 1 : 0;
+        
       
         // car
         String _matricule = jfMatricule.getText();
         String _marque = jfMarque.getText();
         String _model = jfModel.getText();
-        int _transmission = (int) jfTransmission.getValue();
+        String _transmission = jfTransmission.getSelectedIndex() == 0 ? "Automatique" : "Manuel";
         int _year = jfYear.getValue(); // set current year
 
         try {
@@ -507,14 +502,13 @@ public class AppInterface extends javax.swing.JFrame {
             own.setPhone(_phone);
             own.setCni(_cni);
             own.setDob(dob);
-            own.setGender(_gender);
 
             String[] cols = db.getColumnsFromTable("auto_owners");
             Object[] owner_vals = owner_values_object(own);
 
             ownerId = db.insertIntoTable("auto_owners", cols, owner_vals, 1);
 
-            affichage();
+            affichage(filterByGenderValue);
         } catch (SQLException err) {
             System.out.println(err.getMessage());
             err.getStackTrace();
@@ -526,19 +520,24 @@ public class AppInterface extends javax.swing.JFrame {
         try {
             System.out.println("");
             // String matricule, String marque, String model, int transmission, int annee, int ownerId
-            Car car = new Car(_marque, _model, _transmission, _year, ownerId);
+            Car car = new Car(_matricule,_marque, _model, _transmission, _year, ownerId);
+            
             System.out.println(car);
             String[] cols = db.getColumnsFromTable("auto_cars");
             Object[] car_vals = car_values_object(car);
 
             db.insertIntoTable("auto_cars", cols, car_vals, 1);
           
-            affichage();
+            affichage(filterByGenderValue);
           
         } catch (SQLException err) {
             System.out.println(err.getMessage());
             err.getStackTrace();
         }
+        
+        // Altert and clear form
+        JOptionPane.showMessageDialog(this, "Data inserted");
+        cancel_btn();
       
     } catch (Exception ex) {
         System.out.println("Les champs sont obligatoires");
@@ -560,8 +559,9 @@ public class AppInterface extends javax.swing.JFrame {
     String _matricule = jfMatricule.getText();
     String _marque = jfMarque.getText();
     String _model = jfModel.getText();
-    //int _transmission = (int) jfTransmission.getValue();
-    return _dob != null && !_cni.trim().isEmpty() && !_firstname.trim().isEmpty() && !_lastname.trim().isEmpty() && !_phone.trim().isEmpty() && !_matricule.trim().isEmpty() && !_marque.trim().isEmpty() && !_model.trim().isEmpty();
+    String _transmission = jfTransmission.getSelectedIndex() == 0 ? "Automatique" : "Manuel";
+    
+    return !_transmission.trim().isEmpty() && _dob != null && !_cni.trim().isEmpty() && !_firstname.trim().isEmpty() && !_lastname.trim().isEmpty() && !_phone.trim().isEmpty() && !_matricule.trim().isEmpty() && !_marque.trim().isEmpty() && !_model.trim().isEmpty();
   }
 
   private Object[] car_values_object(Car car) {
@@ -588,16 +588,55 @@ public class AppInterface extends javax.swing.JFrame {
     carList.add(own.getPhone());
     carList.add(own.getCni());
     carList.add(own.getDob());
-    carList.add(own.getGender());
 
     Object[] owners = carList.toArray();
 
     return owners;
   }
+  
+private void cancel_btn() {
+    jfCNI.setText("");
+    jfFirstName.setText("");
+    jfLastName.setText("");
+    jfPhoneNumber.setText("");
+    jfMatricule.setText("");
+    jfDoB.setDate(null);
+    
 
-  private void affichage() {
+    jfMarque.setText("");
+    jfModel.setText("");
+    jfTransmission.setSelectedIndex(0);
+    jfYear.setValue(Year.now().getValue()); // set current year
+
+}
+
+  private void clear_all_without_cni() {
+    jfFirstName.setText("");
+    jfLastName.setText("");
+    jfPhoneNumber.setText("");
+    jfMatricule.setText("");
+    jfDoB.setDate(null);
+    
+
+    jfMarque.setText("");
+    jfModel.setText("");
+    jfTransmission.setSelectedIndex(0);
+    jfYear.setValue(Year.now().getValue()); // set current year
+
+  }
+
+private void affichage(String filter) {
+    String sql;
+    
+    if("Female".equals(filter)){
+        sql = "SELECT CNI,FIRST_NAME,LAST_NAME,PHONE,MARQUE,ANNEE FROM auto_owners, auto_cars WHERE auto_owners.OWNER_ID=auto_cars.OWNER_ID AND auto_owners.cni like '2%'";  
+    }else if("Male".equals(filter)){
+        sql = "SELECT CNI,FIRST_NAME,LAST_NAME,PHONE,MARQUE,ANNEE FROM auto_owners, auto_cars WHERE auto_owners.OWNER_ID=auto_cars.OWNER_ID AND auto_owners.cni like '1%'";  
+    }else{
+        sql = "SELECT CNI,FIRST_NAME,LAST_NAME,PHONE,MARQUE,ANNEE FROM auto_owners, auto_cars WHERE auto_owners.OWNER_ID=auto_cars.OWNER_ID";
+    }
+      
     try {
-      String sql = "SELECT CNI,MATRICULE,FIRST_NAME,LAST_NAME,PHONE,MARQUE,ANNEE FROM auto_owners, auto_cars WHERE auto_owners.OWNER_ID=auto_cars.OWNER_ID";
       ResultSet rs = db.query(sql);
       db.displayTable(rs, jfTables);
     } catch (Exception ex) {
@@ -605,7 +644,7 @@ public class AppInterface extends javax.swing.JFrame {
         .getLogger(AppInterface.class.getName())
         .log(Level.SEVERE, null, ex);
     }
-  }
+}
 
   /**
    * @param args the command line arguments
@@ -652,9 +691,9 @@ public class AppInterface extends javax.swing.JFrame {
     private javax.swing.JPanel bloc_proprietaire;
     private javax.swing.JPanel bloc_proprietaire1;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -671,16 +710,15 @@ public class AppInterface extends javax.swing.JFrame {
     private javax.swing.JTextField jfCNI;
     private javax.swing.JButton jfCancel;
     private com.toedter.calendar.JDateChooser jfDoB;
+    private javax.swing.JComboBox<String> jfFilterByGender;
     private javax.swing.JTextField jfFirstName;
-    private javax.swing.JRadioButton jfGenderFemale;
-    private javax.swing.JRadioButton jfGenderMale;
     private javax.swing.JTextField jfLastName;
     private javax.swing.JTextField jfMarque;
     private javax.swing.JTextField jfMatricule;
     private javax.swing.JTextField jfModel;
     private javax.swing.JTextField jfPhoneNumber;
     private javax.swing.JTable jfTables;
-    private javax.swing.JSpinner jfTransmission;
+    private javax.swing.JComboBox<String> jfTransmission;
     private javax.swing.JButton jfValidate;
     private com.toedter.calendar.JYearChooser jfYear;
     // End of variables declaration//GEN-END:variables

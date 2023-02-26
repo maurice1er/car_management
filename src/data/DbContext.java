@@ -119,7 +119,7 @@ public class DbContext {
             if (generatedKeys.next()) {
                 System.out.println(generatedKeys.getLong(1));
                 return generatedKeys.getInt(1);
-            }
+            } 
             else {
                 throw new SQLException("Creating user failed, no ID obtained.");
             }
@@ -206,8 +206,8 @@ public class DbContext {
             for (int i = 1; i <= columnCount; i++) {
                 columns.add(md.getColumnName(i));
             }
-            System.out.println(columns);
-            System.out.println("");
+            /*System.out.println(columns);
+            System.out.println("");*/
             
 
             Vector data = new Vector();
@@ -221,8 +221,8 @@ public class DbContext {
                 
                 data.add(row);
             }
-            System.out.println(data);
-            System.out.println("");
+            /*System.out.println(data);
+            System.out.println("");*/
 
             DefaultTableModel tableModel = new DefaultTableModel(data, columns);
             table.setModel(tableModel);
