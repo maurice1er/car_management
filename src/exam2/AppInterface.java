@@ -500,6 +500,10 @@ public class AppInterface extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Illegal to those under 18");
                 return;
             }
+            if(correct_cni_format(_cni) == false){
+                JOptionPane.showMessageDialog(this, "CNI must be at least 13 characters long and start with 1 or 2 (1: male, 2: female)");
+                return;
+            }
                 
 
             Date dob = new Date(o_year, o_month, o_day);
@@ -581,6 +585,13 @@ public class AppInterface extends javax.swing.JFrame {
   }
   
   
+  private boolean correct_cni_format(String cni){
+    if(cni.length() > 13 && (cni.startsWith("1") || cni.startsWith("2")) ){
+        return true;
+    }
+    return false;
+  }
+  
   private boolean available_owner(int year, int month, int day){
     // date de naissance de l'utilisateur
     LocalDate dateNaissance = LocalDate.of(year, month, day);
@@ -590,9 +601,6 @@ public class AppInterface extends javax.swing.JFrame {
 
     // calcul de l'âge en années
     long age = ChronoUnit.YEARS.between(dateNaissance, dateActuelle);
-      System.out.println("l'utilisateur a: " + dateNaissance);
-      System.out.println("l'utilisateur a: " + dateActuelle);
-      System.out.println("l'utilisateur a: " + age);
     // vérification si l'utilisateur a au moins 18 ans
     if (age >= 18) {
         return true;
