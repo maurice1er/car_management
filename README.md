@@ -1,7 +1,7 @@
 ## Projet de gestion des automobiles avec Java swing
 
 ## Result
-![Screeshort result](javaswing.png)
+[./javaswing.png](https://raw.githubusercontent.com/maurice1er/car_management/main/javaswing.PNG)
 
 
 ## Base de donnees Sql Server 
