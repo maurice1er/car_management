@@ -157,7 +157,7 @@
                       <Component id="jfPhoneNumber" max="32767" attributes="0"/>
                       <Component id="jfDoB" pref="127" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="16" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -271,9 +271,9 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jfMarque" alignment="0" pref="127" max="32767" attributes="0"/>
                       <Component id="jfModel" alignment="0" max="32767" attributes="0"/>
-                      <Component id="jfYear" max="32767" attributes="0"/>
                       <Component id="jfMatricule" max="32767" attributes="0"/>
                       <Component id="jfTransmission" max="32767" attributes="0"/>
+                      <Component id="jfYear" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
               </Group>
@@ -340,8 +340,6 @@
             <Property name="text" type="java.lang.String" value="Year"/>
           </Properties>
         </Component>
-        <Component class="com.toedter.calendar.JYearChooser" name="jfYear">
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
             <Property name="text" type="java.lang.String" value="Matricule"/>
@@ -358,6 +356,29 @@
               </StringArray>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value=""/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="jfYear">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="12">
+                <StringItem index="0" value="2023"/>
+                <StringItem index="1" value="2022"/>
+                <StringItem index="2" value="2021"/>
+                <StringItem index="3" value="2020"/>
+                <StringItem index="4" value="2019"/>
+                <StringItem index="5" value="2018"/>
+                <StringItem index="6" value="2017"/>
+                <StringItem index="7" value="2016"/>
+                <StringItem index="8" value="2015"/>
+                <StringItem index="9" value="2014"/>
+                <StringItem index="10" value="2013"/>
+                <StringItem index="11" value="2012"/>
+              </StringArray>
+            </Property>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

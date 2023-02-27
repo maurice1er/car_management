@@ -155,7 +155,7 @@ public class DbContext {
         }
         
         String sql = sb.toString();
-        //System.out.println(sql);
+        System.out.println(sql);
         
         ResultSet rs = query(sql);
         

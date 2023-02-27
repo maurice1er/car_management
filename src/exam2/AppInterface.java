@@ -87,10 +87,10 @@ public class AppInterface extends javax.swing.JFrame {
         jfModel = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jfYear = new com.toedter.calendar.JYearChooser();
         jLabel10 = new javax.swing.JLabel();
         jfMatricule = new javax.swing.JTextField();
         jfTransmission = new javax.swing.JComboBox<>();
+        jfYear = new javax.swing.JComboBox<>();
         jfValidate = new javax.swing.JButton();
         jfCancel = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -177,7 +177,7 @@ public class AppInterface extends javax.swing.JFrame {
                     .addComponent(jfLastName)
                     .addComponent(jfPhoneNumber)
                     .addComponent(jfDoB, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         bloc_proprietaireLayout.setVerticalGroup(
             bloc_proprietaireLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,6 +226,8 @@ public class AppInterface extends javax.swing.JFrame {
         jfTransmission.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Automatique", "Manuel" }));
         jfTransmission.setToolTipText("");
 
+        jfYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012" }));
+
         javax.swing.GroupLayout bloc_proprietaire1Layout = new javax.swing.GroupLayout(bloc_proprietaire1);
         bloc_proprietaire1.setLayout(bloc_proprietaire1Layout);
         bloc_proprietaire1Layout.setHorizontalGroup(
@@ -242,9 +244,9 @@ public class AppInterface extends javax.swing.JFrame {
                 .addGroup(bloc_proprietaire1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jfMarque, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                     .addComponent(jfModel)
-                    .addComponent(jfYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jfMatricule)
-                    .addComponent(jfTransmission, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jfTransmission, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jfYear, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(16, 16, 16))
         );
         bloc_proprietaire1Layout.setVerticalGroup(
@@ -547,7 +549,7 @@ public class AppInterface extends javax.swing.JFrame {
         String _marque = jfMarque.getText();
         String _model = jfModel.getText();
         String _transmission = jfTransmission.getSelectedIndex() == 0 ? "Automatique" : "Manuel";
-        int _year = jfYear.getValue(); // set current year
+        int _year = Integer.parseInt((String)jfYear.getSelectedItem()); // set current year
         
         try {
             // String matricule, String marque, String model, int transmission, int annee, int ownerId
@@ -578,7 +580,7 @@ public class AppInterface extends javax.swing.JFrame {
         cancel_btn();
       
     } catch (Exception ex) {
-        System.out.println("Les champs sont obligatoires");
+        System.out.println(ex.getMessage());
         JOptionPane.showMessageDialog(this, "/!\\ Tous les champs sont obligatoires");
     }
     
@@ -586,7 +588,7 @@ public class AppInterface extends javax.swing.JFrame {
   
   
   private boolean correct_cni_format(String cni){
-    if(cni.length() > 13 && (cni.startsWith("1") || cni.startsWith("2")) ){
+    if(cni.length() == 13 && (cni.startsWith("1") || cni.startsWith("2")) ){
         return true;
     }
     return false;
@@ -669,7 +671,8 @@ private void cancel_btn() {
     jfMarque.setText("");
     jfModel.setText("");
     jfTransmission.setSelectedIndex(0);
-    jfYear.setValue(Year.now().getValue()); // set current year
+    //jfYear.setValue(Year.now().getValue()); // set current year
+    jfYear.setSelectedItem(Year.now().getValue());
 
 }
 
@@ -684,7 +687,8 @@ private void cancel_btn() {
     jfMarque.setText("");
     jfModel.setText("");
     jfTransmission.setSelectedIndex(0);
-    jfYear.setValue(Year.now().getValue()); // set current year
+    jfYear.setSelectedItem(Year.now().getValue());
+    //jfYear.setValue(Year.now().getValue()); // set current year
 
   }
 
@@ -783,6 +787,6 @@ private void affichage(String filter) {
     private javax.swing.JTable jfTables;
     private javax.swing.JComboBox<String> jfTransmission;
     private javax.swing.JButton jfValidate;
-    private com.toedter.calendar.JYearChooser jfYear;
+    private javax.swing.JComboBox<String> jfYear;
     // End of variables declaration//GEN-END:variables
 }
